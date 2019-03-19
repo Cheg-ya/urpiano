@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import './Menu.css';
+import './Menu.scss';
 
 class Menu extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class Menu extends Component {
         <div id="menu" className="menuContainer">
           <div className="menuBtnCover">
             <button className="menuBtn home"><Link to="/">Home</Link></button>
-            <button className="menuBtn duo">Duo</button>
+            <Link className="menuBtn duo" to="/duo">Duo</Link>
             <button className="menuBtn login">Login</button>
           </div>
         </div>

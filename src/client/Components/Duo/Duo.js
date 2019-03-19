@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Duo.css';
+import './Duo.scss';
 
 class Duo extends Component {
   render() {

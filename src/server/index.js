@@ -10,6 +10,11 @@ const io = socket(server);
 io.on('connect', socket => {
   console.log('User connected');
 
+  socket.on('play', (midiNumber, gp) => {
+    socket.emit('play', 'play success')
+    console.log('keyNumber: ' + midiNumber, gp);
+  });
+  
   socket.on('disconnect', () =>{
     console.log('User disconnect');
   });
@@ -19,3 +24,9 @@ server.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${p
 
 app.use(express.static('dist'));
 app.use(express.json());
+
+if (process.env.NODE_ENV === "production") {
+  console.log("Production");
+} else {
+  console.log("Development");
+}

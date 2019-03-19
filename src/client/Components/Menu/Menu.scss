@@ -1,0 +1,48 @@
+@keyframes wider {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100px;
+  }
+}
+
+.menuWrapper {
+  position: fixed;
+  z-index: 1;
+  top: 70px;
+  width: 100%;
+  height: 60vh;
+
+  .menuContainer {
+    position: absolute;
+    right: 0;
+    width: 100px;
+    background-color: white;
+    animation: wider 0.5s;
+
+    .menuBtnCover {
+      padding: 5px;
+      box-shadow: 1px 1px 1px 2px white;
+  
+      .menuBtn {
+        display: block;
+        transition: 0.3s;
+        background-color: transparent;
+        text-align: center;
+        color: black;
+        width: 100%;
+        font-size: 1.2rem;
+      }
+  
+      .menuBtn:hover, .menuBtn:focus {
+        background-color: #f1f1f1;  
+      }
+
+      .home > a {
+        color: black;
+      }
+    }
+  }
+}

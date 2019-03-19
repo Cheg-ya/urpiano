@@ -1,12 +1,14 @@
+import ResponsivePiano from './Components/ResponsivePIano/ResponsivePiano';
+import { IoMdArrowRoundDown } from 'react-icons/io';
 import React, { Component, Fragment } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Vspace from './Components/Vspace/Vspace';
 import Single from './Components/Single/Single';
-import Piano from './Components/Piano/Piano';
 import Menu from './Components/Menu/Menu';
+import { FaMagic } from 'react-icons/fa';
 import Duo from './Components/Duo/Duo'
-import socket from 'socket.io-client';
-import './app.css';
+import 'react-piano/dist/styles.css';
+import io from 'socket.io-client';
+import './app.scss';
 
 export default class App extends Component {
   constructor(props) {
@@ -16,14 +18,39 @@ export default class App extends Component {
       isMenuOpen: false
     };
 
+    this.sendSocket = this.sendSocket.bind(this);
+    this.onPlayNoteInput = this.onPlayNoteInput.bind(this);
     this.onClickMenuOpen = this.onClickMenuOpen.bind(this);
   }
 
-  onClickMenuOpen(e) {
+  sendSocket() {
+    const { endpoint } = this.state;
+    const socket = io(endpoint);
+
+    socket.emit('try', endpoint);
+
+    socket.on('try', endpoint => {
+
+      console.log(endpoint);
+    });
+  }
+
+  onClickMenuOpen() {
     this.setState(prevState => {
       return {
         isMenuOpen: !prevState.isMenuOpen
       };
+    });
+  }
+
+  onPlayNoteInput(midiNumber) {
+    const { endpoint } = this.state;
+    const socket = io(endpoint);
+
+    socket.emit('play', midiNumber, 'grand_piano');
+
+    socket.on('play', midiNumber => {
+      console.log(midiNumber);
     });
   }
 
@@ -44,12 +71,16 @@ export default class App extends Component {
         <Switch>
           <Route exact path="/">
             <Single>
-              <Piano />
+              <div className="tutorialGuideText">
+                <p className=""><FaMagic />Do your Magic by clicking, tapping, or using your keyboard</p>
+                <IoMdArrowRoundDown />
+              </div>
+              <ResponsivePiano />
             </Single>
           </Route>
           <Route exact path="/duo">
             <Duo>
-              <Piano />
+              <ResponsivePiano onPlayNoteInput={this.onPlayNoteInput}/>
             </Duo>
           </Route>
         </Switch>

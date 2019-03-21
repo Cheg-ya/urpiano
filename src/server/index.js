@@ -7,11 +7,15 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
-io.on('connect', socket => {
-  console.log('User connected');
+io.of('/duo').on('connect', socket => {
+  console.log('User connected, id: '+ socket.id);
+
+  socket.on('join', (id, name) => {
+    // debugger;
+  });
 
   socket.on('play', (midiNumber, gp) => {
-    socket.emit('play', 'play success')
+    socket.emit('play', 'play success');
     console.log('keyNumber: ' + midiNumber, gp);
   });
   

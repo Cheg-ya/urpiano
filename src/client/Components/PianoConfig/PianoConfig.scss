@@ -3,8 +3,9 @@
   padding: 10px;
 
   .configCover {
-    display: flex;
-    justify-content: center;
+    div {
+      display: inline-block;
+    }
 
     small {
       font-size: 0.8rem;

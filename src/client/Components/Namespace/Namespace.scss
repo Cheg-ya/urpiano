@@ -1,0 +1,144 @@
+.nameSpaceForm {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+
+  .closeBtn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: red;
+    font-size: 1.4rem;
+    opacity: 1;
+  }
+  
+  .closeBtn:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  .inputCover {
+    text-align: center;
+
+    label {
+      color: red;
+      font-size: 0.7rem;
+      display: block;
+      margin: 2px 0 6px 0;
+    }
+
+    label > * {
+      font-size: 0.8rem;
+      vertical-align: bottom;
+    }
+    
+    .namespaceInput {
+      outline: none;
+      border: none;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+      margin: 4px;
+      padding: 4px;
+      text-align: center;
+      margin: 0 auto;
+    }
+  
+    .submitBtn {
+      margin-top: 10px;
+      width: 90%;
+      outline: none;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Lato', sans-serif;
+      padding: 3px 0;
+      color: white;
+      background-color: black;
+      cursor: pointer;
+    }
+  
+    .submitBtn:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.confirmContainer {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+
+  .copyBtn {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: black;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: white;
+    opacity: 1;
+    transition: 0.5s;
+  }
+
+  .copyBtn:hover, .copyBtn:focus {
+    opacity: 0.8;
+    background-color: black;
+    color: white;
+  }
+
+  .confirmCover {
+    background-color: white;
+
+    label {
+      font-size: 0.9rem;
+    }
+
+    div.url {
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .confirmBtnCover {
+      text-align: center;
+      padding-bottom: 5px;
+
+      .confirmBtn {
+        margin-top: 10px;
+        display: inline-block;
+        width: 90%;
+        outline: none;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: 'Lato', sans-serif;
+        padding: 3px 0;
+        color: white;
+        background-color: black;
+        cursor: pointer;
+        transition: 0.5s;
+      }
+
+      .confirmBtn:hover{
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.formLogo {
+  font-family: 'Pacifico', cursive;
+  color: red;
+  font-size: 2rem;
+  text-align: center;
+}

@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
+import cover from '../../../../public/images/piano.svg';
 import './Duo.scss';
 
 class Duo extends Component {
   render() {
-    console.log(this.props.children);
-
     return (
-      <div className="singleContainer">
-        <div className="singleCover">
+      <div className="duoContainer">
+        <div className="duoCover">
           <div className="imageBackgroundCover">
             <div className="transparent"></div>
-            <img className="backgroundImage" src="https://images.unsplash.com/photo-1507417869387-f868beebf2f6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1200&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9" alt=""/>
+            <img className="backgroundImage" src={cover} alt=""/>
           </div>
-          <div className="pianoCover">
-            {this.props.children}
+          <div className="firstPianoCover">
+            {this.props.children[0]}
+          </div>
+          <div className="secondPianoCover">
+            {this.props.children[1]}
           </div>
         </div>
       </div>

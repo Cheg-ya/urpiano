@@ -5,6 +5,7 @@ import './Menu.scss';
 class Menu extends Component {
   constructor(props) {
     super(props);
+    this.duoBtnClick = this.duoBtnClick.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
@@ -14,13 +15,19 @@ class Menu extends Component {
     }
   }
 
+ duoBtnClick(e) {
+  if (e.target === e.currentTarget) {
+    this.props.onClickOpen();
+  }
+ }
+
   render() {
     return (
       <div className="menuWrapper" onClick={this.handleOnClick}>
         <div id="menu" className="menuContainer">
           <div className="menuBtnCover">
             <button className="menuBtn home"><Link to="/">Home</Link></button>
-            <Link className="menuBtn duo" to="/duo">Duo</Link>
+            <button className="menuBtn duo" onClick={this.duoBtnClick}>Duo</button>
             <button className="menuBtn login">Login</button>
           </div>
         </div>

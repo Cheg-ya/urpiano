@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import './PianoConfig.scss';
 import MusyngNames from 'soundfont-player/names/musyngkite.json';
+import React, { Component } from 'react';
 import { MidiNumbers } from 'react-piano';
+import PropTypes from 'prop-types';
+import './PianoConfig.scss';
 
 class PianoConfig extends Component {
   constructor(props) {
     super(props);
+
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.changeLastNote = this.changeLastNote.bind(this);
     this.changeFirstNote = this.changeFirstNote.bind(this);
@@ -13,6 +15,10 @@ class PianoConfig extends Component {
     this.createFirstNoteOptions = this.createFirstNoteOptions.bind(this);
     this.createInstrumentOptions = this.createInstrumentOptions.bind(this);
   }
+
+  static defaultProps = {
+    setConfig: () => {}
+  };
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
@@ -140,3 +146,10 @@ class PianoConfig extends Component {
 }
 
 export default PianoConfig;
+
+PianoConfig.propTypes = {
+  instrumentName: PropTypes.string.isRequired,
+  keyboardShortcutOffset: PropTypes.number,
+  noteRange: PropTypes.object.isRequired,
+  setConfig: PropTypes.func.isRequired
+};

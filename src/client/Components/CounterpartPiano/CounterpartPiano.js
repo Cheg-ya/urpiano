@@ -1,11 +1,12 @@
 import { Piano, MidiNumbers } from 'react-piano';
 import React, { Component, Fragment } from 'react';
-import io from 'socket.io-client';
 import SoundPlayer from '../SoundPlayer/SoundPlayer';
+import PianoConfig from '../PianoConfig/PianoConfig';
+import PropTypes from 'prop-types';
 
 const audioContext = new AudioContext();
 
-class CounterpartPiano extends Component { //음향 정보만 받아서 실행
+class CounterpartPiano extends Component {
   constructor(props) {
     super(props);
 
@@ -14,9 +15,19 @@ class CounterpartPiano extends Component { //음향 정보만 받아서 실행
       noteRange: {
         first: MidiNumbers.fromNote('c3'),
         last: MidiNumbers.fromNote('f5')
-      },
-      keyboardShortcutOffset: 0
+      }
     };
+
+    this.setConfig = this.setConfig.bind(this);
+  }
+
+  setConfig({ noteRange, instrumentName }) {
+    this.setState(prevState => {
+      return {
+        instrumentName: !instrumentName ? prevState.instrumentName : instrumentName,
+        noteRange: !noteRange ? prevState.noteRange : noteRange
+      };
+    });
   }
 
   render() {
@@ -27,23 +38,32 @@ class CounterpartPiano extends Component { //음향 정보만 받아서 실행
         instrumentName={instrumentName}
         audioContext={audioContext}
         socket={this.props.socket}
-        render={({ isLoading, playNote, stopNote }) => {
-          return (
-            <Fragment>
-              <Piano
-                noteRange={noteRange}
-                width={this.props.width}
-                playNote={playNote}
-                stopNote={stopNote}
-                disabled={isLoading}
-                {...this.props}
-              />
-            </Fragment>
-          );
-        }}
+        setConfig={this.setConfig}
+        render={({ isLoading, playNote, stopNote }) => (
+          <Fragment>
+            <Piano
+              noteRange={noteRange}
+              width={this.props.width}
+              playNote={playNote}
+              stopNote={stopNote}
+              disabled={isLoading}
+              {...this.props}
+            />
+            <PianoConfig 
+              instrumentName={instrumentName}
+              noteRange={noteRange}
+            />
+          </Fragment>
+        )}
       />
     );
   }
 }
 
 export default CounterpartPiano;
+
+CounterpartPiano.propTypes = {
+  width: PropTypes.number,
+  className: PropTypes.string,
+  socket: PropTypes.object
+};

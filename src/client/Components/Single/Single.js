@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './Single.scss';
 
 class Single extends Component {
@@ -19,3 +20,7 @@ class Single extends Component {
 }
 
 export default Single;
+
+Single.propTypes =  {
+  children: PropTypes.node
+};

@@ -3,6 +3,7 @@ import DimensionsProvider from '../DimensionsProvider/DimensionsProvider';
 import SoundfontProvider from '../SoundfontProvider/SoundfontProvider';
 import { Piano, MidiNumbers, KeyboardShortcuts } from 'react-piano';
 import PianoConfig from '../PianoConfig/PianoConfig';
+import PropTypes from 'prop-types';
 
 const audioContext = new AudioContext();
 
@@ -72,3 +73,7 @@ class ResponsivePiano extends Component {
 }
 
 export default ResponsivePiano;
+
+ResponsivePiano.propTypes = {
+  className: PropTypes.string
+};

@@ -3,7 +3,7 @@
   
   .connectionLog {
     position: absolute;
-    top: 20%;
+    top: 7%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
@@ -21,17 +21,19 @@
 
   .firstPianoCover {
     position: absolute;
-    width: 90%;
-    top: 60%;
+    width: 52%;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
   }
 
   .secondPianoCover {
     position: absolute;
-    width: 90%;
-    top: 53%;
-    left: 100%;
+    width: 52%;
+    top: 30%;
+    left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
   }
 }

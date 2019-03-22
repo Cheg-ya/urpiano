@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import './Menu.scss';
 
 class Menu extends Component {
@@ -37,3 +38,8 @@ class Menu extends Component {
 }
 
 export default Menu;
+
+Menu.propTypes = {
+  onClickClose: PropTypes.func.isRequired,
+  onClickOpen: PropTypes.func.isRequired
+};

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { IoIosWarning } from 'react-icons/io';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import PropTypes from 'prop-types';
 import './Namespace.scss';
 
 class Namespace extends Component {
@@ -115,3 +116,8 @@ class Namespace extends Component {
 }
 
 export default Namespace;
+
+Namespace.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired
+};

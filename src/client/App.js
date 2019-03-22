@@ -8,6 +8,7 @@ import React, { Component, Fragment } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { IoMdArrowRoundDown } from 'react-icons/io';
 import { FaMagic } from 'react-icons/fa';
+import PropTypes from 'prop-types';
 import 'react-piano/dist/styles.css';
 import './app.scss';
 
@@ -92,3 +93,7 @@ export default class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  history: PropTypes.object.isRequired
+};

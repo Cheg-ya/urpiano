@@ -1,6 +1,7 @@
 import Soundfont from 'soundfont-player';
 import React, { Component } from 'react';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 class SoundfontProvider extends Component {
   constructor(props) {
@@ -82,11 +83,6 @@ class SoundfontProvider extends Component {
     });
   }
 
-  onPlayNoteInput(keyNumber) {
-    debugger;
-    socket.emit('play', keyNumber);
-  }
-
   render() {
     const { isLoadingInstrument } = this.state;
 
@@ -100,3 +96,9 @@ class SoundfontProvider extends Component {
 }
 
 export default SoundfontProvider;
+
+SoundfontProvider.propTypes = {
+  instrumentName: PropTypes.string.isRequired,
+  audioContext: PropTypes.instanceOf(AudioContext).isRequired,
+  render: PropTypes.func.isRequired
+};

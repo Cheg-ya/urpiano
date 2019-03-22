@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './Modal.scss';
 
 class Modal extends Component {
   constructor(props) {
     super(props);
-    this.onClickToClose = this.onClickToClose.bind(this);
+    this.onClickClose = this.onClickClose.bind(this);
   }
 
-  onClickToClose(e) {
+  onClickClose(e) {
     if(e.target === e.currentTarget) {
       this.props.closeModal();
     }
@@ -15,7 +16,7 @@ class Modal extends Component {
 
   render() {
     return (
-      <div className="modalCover" onClick={this.onClickToClose}>
+      <div className="modalCover" onClick={this.onClickClose}>
         {this.props.children}
       </div>
     );
@@ -23,3 +24,8 @@ class Modal extends Component {
 }
 
 export default Modal;
+
+Modal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  children: PropTypes.element
+};

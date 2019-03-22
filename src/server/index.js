@@ -1,4 +1,3 @@
-// const { mongoose } = require('./database/database');
 const _ = require('lodash');
 const socket = require('socket.io');
 const express = require('express');
@@ -9,6 +8,10 @@ const server = http.createServer(app);
 const io = socket(server);
 
 const clients = {};
+
+const getCounterpartIds = (target, roomName) => {
+  return _.keys(target.adapter.rooms[roomName].sockets).filter(id => id !== target.id);
+};
 
 io.on('connect', socket => {
   if (!clients[socket.id]) {
@@ -40,7 +43,6 @@ io.on('connect', socket => {
       socket.join(roomName, () => {
         io.to(roomName).emit('join', {
           joined: true,
-          newComer: userName,
           message: `${userName} has joined!`
         });
       });
@@ -77,27 +79,30 @@ io.on('connect', socket => {
   });
 
   socket.on('play', ({ roomName, keyNumber }) => {
-    const counterpartId = _.keys(socket.adapter.rooms[roomName].sockets).filter(id => id !== socket.id);
+    const counterpartId = getCounterpartIds(socket, roomName);
     console.log('play: ', keyNumber);
     io.to(counterpartId).emit('play', keyNumber);
   });
 
   socket.on('stop', ({ roomName, keyNumber }) => {
-    const counterpartId = _.keys(socket.adapter.rooms[roomName].sockets).filter(id => id !== socket.id);
+    const counterpartId = getCounterpartIds(socket, roomName);
     console.log('stop: ', keyNumber);
     io.to(counterpartId).emit('stop', keyNumber);
   });
 
-  socket.on('change', ({ roomName, config }) => {
-    console.log(instrument);
-    // io.to(socket.id).emit('change', config);
+  socket.on('change', ({ roomName, instrumentName, noteRange }) => {
+    const counterpartId = getCounterpartIds(socket, roomName);
+    console.log('change: ', noteRange, instrumentName);
+    io.to(counterpartId).emit('change', {
+      instrumentName,
+      noteRange
+    });
   });
 });
 
 server.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${process.env.PORT || 8080}!`));
 
 app.use(express.static('dist'));
-app.use(express.json());
 
 if (process.env.NODE_ENV === "production") {
   console.log("Production");

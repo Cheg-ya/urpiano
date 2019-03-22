@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { IoIosWarning } from 'react-icons/io';
+import PropTypes from 'prop-types';
 import './NameInput.scss';
 
 class NameInput extends Component {
@@ -70,3 +71,8 @@ class NameInput extends Component {
 }
 
 export default NameInput;
+
+NameInput.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  onCreate: PropTypes.func.isRequired
+};

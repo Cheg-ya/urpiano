@@ -1,12 +1,12 @@
 import SoundfontProvider from '../SoundfontProvider/SoundfontProvider';
-import { Piano, MidiNumbers, KeyboardShortcuts } from 'react-piano';
 import PianoConfig from '../PianoConfig/PianoConfig';
+import { Piano, MidiNumbers, KeyboardShortcuts } from 'react-piano';
 import React, { Component, Fragment } from 'react';
-import io from 'socket.io-client';
+import PropTypes from 'prop-types';
 
 const audioContext = new AudioContext();
 
-class ResizablePiano extends Component { //음향정보 송신
+class ResizablePiano extends Component {
   constructor(props) {
     super(props);
 
@@ -23,9 +23,13 @@ class ResizablePiano extends Component { //음향정보 송신
   }
 
   setConfig(config) {
+    if (config.instrumentName || config.noteRange) {
+      this.props.onChangeConfig(config);
+    }
+
     this.setState(prevState => {
       return _.assign({}, prevState, config);
-    }, this.props.onChangeConfig);
+    });
   }
 
   render() {
@@ -41,6 +45,7 @@ class ResizablePiano extends Component { //음향정보 송신
       <SoundfontProvider
           instrumentName={instrumentName}
           audioContext={audioContext}
+          onChangeConfig={this.props.onChangeConfig}
           render={({ isLoading, playNote, stopNote }) => {
             return (
               <Fragment>
@@ -70,3 +75,12 @@ class ResizablePiano extends Component { //음향정보 송신
 }
 
 export default ResizablePiano;
+
+ResizablePiano.propTypes = {
+  width: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  socket: PropTypes.object.isRequired,
+  onPlayNoteInput: PropTypes.func.isRequired,
+  onStopNoteInput: PropTypes.func.isRequired,
+  onChangeConfig: PropTypes.func.isRequired
+};

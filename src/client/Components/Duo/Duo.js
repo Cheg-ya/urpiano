@@ -1,12 +1,14 @@
 import CounterpartPiano from '../CounterpartPiano/CounterpartPiano';
 import ResizablePiano from '../ResizablePiano/ResizablePiano';
+import DimensionsProvider from '../DimensionsProvider/DimensionsProvider';
 import React, { Component, Fragment } from 'react';
 import NameInput from '../NameInput/NameInput';
 import Modal from '../Modal/Modal';
 import io from 'socket.io-client';
+import PropTypes from 'prop-types';
 import './Duo.scss';
 
-const socket = io('http://localhost:8080');
+const socket = io.connect('http://192.168.0.61:8080');
 
 class Duo extends Component {
   constructor(props) {
@@ -20,9 +22,14 @@ class Duo extends Component {
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);
     this.displayRoomLog = this.displayRoomLog.bind(this);
+    this.onChangeConfig = this.onChangeConfig.bind(this);
     this.onPlayNoteInput = this.onPlayNoteInput.bind(this);
     this.onStopNoteInput = this.onStopNoteInput.bind(this);
-    this.onChangeConfig = this.onChangeConfig.bind(this);
+    this.connectionHandler = this.connectionHandler.bind(this);
+  }
+
+  componentDidMount() {
+    this.connectionHandler();
   }
 
   componentDidUpdate(prevProps) {
@@ -54,7 +61,9 @@ class Duo extends Component {
       roomName,
       userName
     });
+  }
 
+  connectionHandler() {
     socket.on('join', result => {
       const { joined, message } = result;
 
@@ -82,28 +91,28 @@ class Duo extends Component {
     });
   }
 
-  getOutOfRoom() {
-    socket.close();
-    this.props.history.replace('/');
-  }
-
   displayRoomLog() {
     const { log } = this.state;
 
-    return log.slice(-5).map(message => {
+    return log.slice(-3).map(message => {
       return (
         <div key={Math.random()}>{message}</div>
       );
     });
   }
 
-  onChangeConfig(change) {
-    const { instrumentName } = this.state;
+  getOutOfRoom() {
+    socket.close();
+    this.props.history.replace('/');
+  }
+
+  onChangeConfig(newConfig) {
     const roomName = this.props.match.params.room_name;
 
     socket.emit('change', {
       roomName,
-      instrumentName
+      instrumentName: newConfig.instrumentName,
+      noteRange: newConfig.noteRange
     });
   }
 
@@ -137,28 +146,38 @@ class Duo extends Component {
           <div className="imageBackgroundCover">
             <img className="backgroundImage" src="https://images.unsplash.com/photo-1552186118-22d86b3559b7?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2500&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9" alt=""/>
           </div>
-          {joined
-          ? <Fragment>
-              <div className="firstPianoCover">
-                <ResizablePiano
-                  className="theme"
-                  socket={socket}
-                  width={600}
-                  onPlayNoteInput={this.onPlayNoteInput}
-                  onStopNoteInput={this.onStopNoteInput}
-                  onChangeConfig={this.onChangeConfig}
-                />
-              </div>
-              <div className="secondPianoCover">
-                <CounterpartPiano
-                  socket={socket}
-                  width={600}
-                />
-              </div>
-            </Fragment>
-          : <Modal>
-              <NameInput onCreate={this.createRoom} closeModal={this.getOutOfRoom} />
-            </Modal>}
+            {joined
+              ? <Fragment>
+                  <div className="firstPianoCover">
+                    <DimensionsProvider>
+                      {({ containerWidth }) => (
+                        <ResizablePiano
+                          className="theme"
+                          socket={socket}
+                          width={containerWidth}
+                          onPlayNoteInput={this.onPlayNoteInput}
+                          onStopNoteInput={this.onStopNoteInput}
+                          onChangeConfig={this.onChangeConfig}
+                        />
+                      )}
+                    </DimensionsProvider>
+                  </div>
+                  <div className="secondPianoCover">
+                    <DimensionsProvider>
+                      {({ containerWidth }) => (
+                        <CounterpartPiano
+                          className="theme"
+                          socket={socket}
+                          width={containerWidth}
+                        />
+                      )}
+                    </DimensionsProvider>
+                  </div>
+                </Fragment>
+              : <Modal closeModal={this.getOutOfRoom}>
+                  <NameInput onCreate={this.createRoom} closeModal={this.getOutOfRoom} />
+                </Modal>
+            }
         </div>
       </div>
     );
@@ -166,3 +185,8 @@ class Duo extends Component {
 }
 
 export default Duo;
+
+Duo.propTypes = {
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired
+};

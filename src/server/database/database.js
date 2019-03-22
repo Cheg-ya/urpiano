@@ -23,5 +23,5 @@ db.on('error', err => {
 });
 
 module.exports = {
-    mongoose
+  mongoose
 };

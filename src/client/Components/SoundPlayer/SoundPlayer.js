@@ -1,6 +1,7 @@
 import Soundfont from 'soundfont-player';
 import React, { Component } from 'react';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 class SoundPlayer extends Component {
   constructor(props) {
@@ -14,12 +15,13 @@ class SoundPlayer extends Component {
 
     this.playNote = this.playNote.bind(this);
     this.stopNote = this.stopNote.bind(this);
+    this.eventHandler = this.eventHandler.bind(this);
     this.loadInstrument = this.loadInstrument.bind(this);
   }
 
   componentDidMount() {
-    this.loadInstrument(this.props.instrumentName);
-    this.handler(); 
+    this.loadInstrument();
+    this.eventHandler(); 
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -27,7 +29,7 @@ class SoundPlayer extends Component {
     const newInstrumentName = this.props.instrumentName;
 
     if (prevInstrumentName !== newInstrumentName) {
-      this.loadInstrument(newInstrumentName);
+      this.loadInstrument();
     }
   }
 
@@ -49,44 +51,52 @@ class SoundPlayer extends Component {
     });
   }
 
-  playNote(midiNumber) {
+  playNote(keyNumber) {
     const { audioContext } = this.props;
     const { instrument } = this.state;
 
     audioContext.resume().then(() => {
-      const audioNode = instrument.play(midiNumber);
+      const audioNode = instrument.play(keyNumber);
 
       this.setState(prevState => {
         return {
-          activeAudioNodes: _.assign({}, prevState.activeAudioNodes, { [midiNumber]: audioNode })
+          activeAudioNodes: _.assign({}, prevState.activeAudioNodes, { [keyNumber]: audioNode })
         };
       });
     });
   }
 
-  stopNote(midiNumber) {
+  stopNote(keyNumber) {
     const { audioContext } = this.props;
     const { activeAudioNodes } = this.state;
 
     audioContext.resume().then(() => {
-      if (!activeAudioNodes[midiNumber]) {
+      if (!activeAudioNodes[keyNumber]) {
         return;
       }
 
-      const audioNode = activeAudioNodes[midiNumber];
+      const audioNode = activeAudioNodes[keyNumber];
 
       audioNode.stop();
 
       this.setState({
-        activeAudioNodes: _.assign({}, activeAudioNodes, { [midiNumber]: null })
+        activeAudioNodes: _.assign({}, activeAudioNodes, { [keyNumber]: null })
       });
     });
   }
 
-  handler() {
-    this.props.socket.on('play', () =>{
-      debugger;
-    })
+  eventHandler() {
+    this.props.socket.on('play', keyNumber =>{
+      this.playNote(keyNumber);
+    });
+
+    this.props.socket.on('stop', keyNumber => {
+      this.stopNote(keyNumber);
+    });
+
+    this.props.socket.on('change', newInstrumentName => {
+      this.props.setConfig(newInstrumentName);
+    });
   }
 
   render() {
@@ -101,3 +111,11 @@ class SoundPlayer extends Component {
 }
 
 export default SoundPlayer;
+
+SoundPlayer.propTypes = {
+  instrumentName: PropTypes.string.isRequired,
+  setConfig: PropTypes.func.isRequired,
+  audioContext: PropTypes.instanceOf(AudioContext).isRequired,
+  socket: PropTypes.object.isRequired,
+  render: PropTypes.func.isRequired
+};

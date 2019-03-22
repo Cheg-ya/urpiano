@@ -41,7 +41,10 @@ module.exports = {
     extensions: ['*', '.js', '.jsx']
   },
   devServer: {
-    host: '192.168.0.61',
+    allowedHosts: [
+      '192.168.0.61',
+      'localhost'
+    ],
     port: 3000,
     open: true,
     proxy: {

@@ -2,7 +2,7 @@ import Soundfont from 'soundfont-player';
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-class SoundfontProvider extends Component {
+class SoundPlayer extends Component {
   constructor(props) {
     super(props);
 
@@ -19,9 +19,10 @@ class SoundfontProvider extends Component {
 
   componentDidMount() {
     this.loadInstrument(this.props.instrumentName);
+    this.handler(); 
   }
 
-  componentDidUpdate(prevProps, prevState) { // when instrument changed, initialize
+  componentDidUpdate(prevProps, prevState) {
     const prevInstrumentName = prevProps.instrumentName;
     const newInstrumentName = this.props.instrumentName;
 
@@ -30,7 +31,7 @@ class SoundfontProvider extends Component {
     }
   }
 
-  loadInstrument() { //기존 악기를 초기화하고 새 악기 등록
+  loadInstrument() {
     const { instrumentName, audioContext } = this.props;
 
     this.setState({
@@ -82,9 +83,10 @@ class SoundfontProvider extends Component {
     });
   }
 
-  onPlayNoteInput(keyNumber) {
-    debugger;
-    socket.emit('play', keyNumber);
+  handler() {
+    this.props.socket.on('play', () =>{
+      debugger;
+    })
   }
 
   render() {
@@ -93,10 +95,9 @@ class SoundfontProvider extends Component {
     return this.props.render({
       isLoading: isLoadingInstrument,
       playNote: this.playNote,
-      stopNote: this.stopNote,
-      onPlayNoteInput: this.props.onPlayNoteInput
+      stopNote: this.stopNote
     });
   }
 }
 
-export default SoundfontProvider;
+export default SoundPlayer;

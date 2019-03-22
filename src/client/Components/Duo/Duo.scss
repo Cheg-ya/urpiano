@@ -1,36 +1,37 @@
 .duoContainer {
   position: relative;
-}
+  
+  .connectionLog {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+  }
 
-.imageBackgroundCover {
-  width: 100%;
-  height: 90.1vh;
-}
+  .imageBackgroundCover {
+    width: 100%;
+    height: 90.1vh;
 
-.transparent {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(220, 220, 220, 0.2);
-}
+    .backgroundImage {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-.backgroundImage {
-  width: 100%;
-  height: 100%;
-}
+  .firstPianoCover {
+    position: absolute;
+    width: 90%;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-.firstPianoCover {
-  position: absolute;
-  width: 90%;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.secondPianoCover {
-  position: absolute;
-  width: 90%;
-  top: 60%;
-  left: 100%;
-  transform: translate(-50%, -50%);
+  .secondPianoCover {
+    position: absolute;
+    width: 90%;
+    top: 53%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
 }

@@ -2,10 +2,11 @@ import SoundfontProvider from '../SoundfontProvider/SoundfontProvider';
 import { Piano, MidiNumbers, KeyboardShortcuts } from 'react-piano';
 import PianoConfig from '../PianoConfig/PianoConfig';
 import React, { Component, Fragment } from 'react';
+import io from 'socket.io-client';
 
 const audioContext = new AudioContext();
 
-class ResizablePiano extends Component {
+class ResizablePiano extends Component { //음향정보 송신
   constructor(props) {
     super(props);
 
@@ -24,7 +25,7 @@ class ResizablePiano extends Component {
   setConfig(config) {
     this.setState(prevState => {
       return _.assign({}, prevState, config);
-    });
+    }, this.props.onChangeConfig);
   }
 
   render() {
@@ -50,7 +51,9 @@ class ResizablePiano extends Component {
                   stopNote={stopNote}
                   disabled={isLoading}
                   keyboardShortcuts={keyboardShortcuts}
-                  {...this.props}
+                  onPlayNoteInput={this.props.onPlayNoteInput}
+                  onStopNoteInput={this.props.onStopNoteInput}
+                  className={this.props.className}
                 />
                 <PianoConfig
                   instrumentName={instrumentName}

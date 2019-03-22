@@ -36,7 +36,7 @@ class Namespace extends Component {
         };
       });
     }
-    
+
     if (namespace.length >= 5){
       this.setState(() => {
         return {
@@ -87,7 +87,7 @@ class Namespace extends Component {
               {`${location.origin}/duo/${namespace}`}
             </div>
             <div className="confirmBtnCover">
-              <button className="confirmBtn" onClick={this.handleConfirm}>Confirm to move</button>
+              <button className="confirmBtn" onClick={this.handleConfirm}>Confirm</button>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ class Namespace extends Component {
             onChange={this.handleOnChange}
           />
           {invalid && <label><IoIosWarning />At least 5 letters required</label>}
-          <button className="submitBtn" type="submit">Submit</button>
+          <button className="submitBtn" type="submit">Create Room</button>
         </div>
       </form>
     );

@@ -29,7 +29,7 @@ io.on('connect', socket => {
       clients[socket.id].rooms = clients[socket.id].rooms.concat(roomName);
 
       return socket.join(roomName, () => {
-        socket.emit('join', {
+        io.to(roomName).emit('join', {
           joined: true,
           message: `${userName} has created the room`
         });
@@ -43,6 +43,7 @@ io.on('connect', socket => {
       socket.join(roomName, () => {
         io.to(roomName).emit('join', {
           joined: true,
+          partnerJoined: true,
           message: `${userName} has joined!`
         });
       });
@@ -69,7 +70,9 @@ io.on('connect', socket => {
           const isTargetExisted = roomMembers.filter(id => id === socket.id).length;
 
           if (!isTargetExisted) {
-            return io.to(roomName).emit('disconnect', `${targetName} has left the room!`);
+            return io.to(roomName).emit('disconnect', {
+              message: `${targetName} has left the room!`
+            });
           }
         }
       });
@@ -96,6 +99,15 @@ io.on('connect', socket => {
     io.to(counterpartId).emit('change', {
       instrumentName,
       noteRange
+    });
+  });
+
+  socket.on('send', ({ roomName, message }) => {
+    const userName = clients[socket.id].userName;
+
+    io.to(roomName).emit('receive', {
+      message,
+      userName
     });
   });
 });

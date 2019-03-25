@@ -43,33 +43,33 @@ class ResizablePiano extends Component {
 
     return (
       <SoundfontProvider
-          instrumentName={instrumentName}
-          audioContext={audioContext}
-          onChangeConfig={this.props.onChangeConfig}
-          render={({ isLoading, playNote, stopNote }) => {
-            return (
-              <Fragment>
-                <Piano
-                  noteRange={noteRange}
-                  width={this.props.width}
-                  playNote={playNote}
-                  stopNote={stopNote}
-                  disabled={isLoading}
-                  keyboardShortcuts={keyboardShortcuts}
-                  onPlayNoteInput={this.props.onPlayNoteInput}
-                  onStopNoteInput={this.props.onStopNoteInput}
-                  className={this.props.className}
-                />
-                <PianoConfig
-                  instrumentName={instrumentName}
-                  noteRange={noteRange}
-                  keyboardShortcutOffset={keyboardShortcutOffset}
-                  setConfig={this.setConfig}
-                />
-              </Fragment>
-            );
-          }}
-        />
+        instrumentName={instrumentName}
+        audioContext={audioContext}
+        onChangeConfig={this.props.onChangeConfig}
+        render={({ isLoading, playNote, stopNote }) => {
+          return (
+            <Fragment>
+              <Piano
+                noteRange={noteRange}
+                width={this.props.width}
+                playNote={playNote}
+                stopNote={stopNote}
+                disabled={isLoading}
+                keyboardShortcuts={!this.props.isChatMode ? keyboardShortcuts : null}
+                onPlayNoteInput={this.props.onPlayNoteInput}
+                onStopNoteInput={this.props.onStopNoteInput}
+                className={this.props.className}
+              />
+              <PianoConfig
+                instrumentName={instrumentName}
+                noteRange={noteRange}
+                keyboardShortcutOffset={keyboardShortcutOffset}
+                setConfig={this.setConfig}
+              />
+            </Fragment>
+          );
+        }}
+      />
     );
   }
 }
@@ -77,8 +77,9 @@ class ResizablePiano extends Component {
 export default ResizablePiano;
 
 ResizablePiano.propTypes = {
-  width: PropTypes.number.isRequired,
+  isChatMode: PropTypes.bool,
   className: PropTypes.string,
+  width: PropTypes.number.isRequired,
   socket: PropTypes.object.isRequired,
   onPlayNoteInput: PropTypes.func.isRequired,
   onStopNoteInput: PropTypes.func.isRequired,

@@ -7,6 +7,8 @@ import Modal from '../Modal/Modal';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 import './Duo.scss';
+import ChatRoom from '../ChatRoom/ChatRoom';
+import Loader from 'react-loader-spinner'
 
 const socket = io.connect('http://192.168.0.61:8080');
 
@@ -16,20 +18,24 @@ class Duo extends Component {
 
     this.state = {
       log: [],
-      joined: false
+      joined: false,
+      isChatMode: false,
+      partnerJoined: false
     };
 
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);
+    this.openChatRoom = this.openChatRoom.bind(this);
+    this.onSendMessage = this.onSendMessage.bind(this);
     this.displayRoomLog = this.displayRoomLog.bind(this);
     this.onChangeConfig = this.onChangeConfig.bind(this);
     this.onPlayNoteInput = this.onPlayNoteInput.bind(this);
     this.onStopNoteInput = this.onStopNoteInput.bind(this);
-    this.connectionHandler = this.connectionHandler.bind(this);
+    this.socketEventHandler = this.socketEventHandler.bind(this);
   }
 
   componentDidMount() {
-    this.connectionHandler();
+    this.socketEventHandler();
   }
 
   componentDidUpdate(prevProps) {
@@ -63,15 +69,24 @@ class Duo extends Component {
     });
   }
 
-  connectionHandler() {
+  socketEventHandler() {
     socket.on('join', result => {
-      const { joined, message } = result;
+      const { joined, message, partnerJoined } = result;
 
-      if (joined) {
-        this.setState(prevState => {
+      if (joined && !partnerJoined) {
+        return this.setState(prevState => {
           return {
-            joined: true,
-            log: prevState.log.concat(message)
+            joined,
+            log: prevState.log.concat({ message })
+          };
+        });
+
+      } if (joined && partnerJoined) {
+        return this.setState(prevState => {
+          return {
+            joined,
+            partnerJoined,
+            log: prevState.log.concat({ message })
           };
         });
 
@@ -83,6 +98,15 @@ class Duo extends Component {
     });
 
     socket.on('disconnect', message => {
+      this.setState(prevState => {
+        return {
+          partnerJoined: false,
+          log: prevState.log.concat(message)
+        };
+      });
+    });
+
+    socket.on('receive', message => {
       this.setState(prevState => {
         return {
           log: prevState.log.concat(message)
@@ -134,14 +158,34 @@ class Duo extends Component {
     });
   }
 
+  openChatRoom() {
+    this.setState(prevState => {
+      return {
+        isChatMode: !prevState.isChatMode
+      };
+    });
+  }
+
+  onSendMessage(message) {
+    const roomName = this.props.match.params.room_name;
+
+    socket.emit('send', {
+      roomName,
+      message
+    });
+  }
+
   render() {
-    const { joined } = this.state;
+    const { joined, isChatMode, log, partnerJoined } = this.state;
 
     return (
       <div className="duoContainer">
-        <div className="connectionLog">
-          {this.displayRoomLog()}
-        </div>
+        <ChatRoom
+          messages={log}
+          isChatMode={isChatMode}
+          onClickChange={this.openChatRoom}
+          onSubmitMessage={this.onSendMessage}
+        />
         <div className="duoCover">
           <div className="imageBackgroundCover">
             <img className="backgroundImage" src="https://images.unsplash.com/photo-1552186118-22d86b3559b7?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2500&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9" alt=""/>
@@ -155,20 +199,10 @@ class Duo extends Component {
                           className="theme"
                           socket={socket}
                           width={containerWidth}
+                          isChatMode={isChatMode}
                           onPlayNoteInput={this.onPlayNoteInput}
                           onStopNoteInput={this.onStopNoteInput}
                           onChangeConfig={this.onChangeConfig}
-                        />
-                      )}
-                    </DimensionsProvider>
-                  </div>
-                  <div className="secondPianoCover">
-                    <DimensionsProvider>
-                      {({ containerWidth }) => (
-                        <CounterpartPiano
-                          className="theme"
-                          socket={socket}
-                          width={containerWidth}
                         />
                       )}
                     </DimensionsProvider>
@@ -177,6 +211,23 @@ class Duo extends Component {
               : <Modal closeModal={this.getOutOfRoom}>
                   <NameInput onCreate={this.createRoom} closeModal={this.getOutOfRoom} />
                 </Modal>
+            }
+            {partnerJoined
+              ? <div className="secondPianoCover">
+                  <DimensionsProvider>
+                    {({ containerWidth }) => (
+                      <CounterpartPiano
+                        className="theme"
+                        socket={socket}
+                        width={containerWidth}
+                      />
+                    )}
+                  </DimensionsProvider>
+                </div>
+              : <div className="secondPianoCover">
+                  <Loader type="Rings" height="100" width="100" color="#e5474b" />
+                  <div className="waitingMessage">Waiting for connection</div>
+                </div>
             }
         </div>
       </div>

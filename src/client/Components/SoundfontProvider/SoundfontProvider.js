@@ -22,7 +22,7 @@ class SoundfontProvider extends Component {
     this.loadInstrument(this.props.instrumentName);
   }
 
-  componentDidUpdate(prevProps, prevState) { // when instrument changed, initialize
+  componentDidUpdate(prevProps, prevState) {
     const prevInstrumentName = prevProps.instrumentName;
     const newInstrumentName = this.props.instrumentName;
 
@@ -31,7 +31,7 @@ class SoundfontProvider extends Component {
     }
   }
 
-  loadInstrument() { //기존 악기를 초기화하고 새 악기 등록
+  loadInstrument() {
     const { instrumentName, audioContext } = this.props;
 
     this.setState({

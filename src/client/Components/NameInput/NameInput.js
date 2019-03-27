@@ -26,7 +26,7 @@ class NameInput extends Component {
 
     const { name, invalid } = this.state;
 
-    if (name.length < 3 && !invalid) {
+    if (name.length < 2 && !invalid) {
       return this.setState(() => {
         return {
           invalid: true
@@ -62,7 +62,7 @@ class NameInput extends Component {
             value={name}
             onChange={this.handleOnChange}
           />
-          {invalid && <label><IoIosWarning />At least 3 letters required</label>}
+          {invalid && <label><IoIosWarning />At least 2 letters required</label>}
           <button className="submitBtn" type="submit">Submit</button>
         </div>
       </form>

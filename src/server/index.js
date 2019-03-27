@@ -1,22 +1,36 @@
 const _ = require('lodash');
 const socket = require('socket.io');
 const express = require('express');
-const http = require('http');
+const http = require('https');
+const fs = require('fs');
+
+const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
+const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
+const options = {
+  key: privateKey,
+  cert: certificate,
+  ca: fs.readFileSync(__dirname + '/credential/rootSSL.pem')
+};
 
 const app = express();
-const server = http.createServer(app);
+const server = http.createServer(options, app);
 const io = socket(server);
 
 const clients = {};
 
 const getCounterpartIds = (target, roomName) => {
-  return _.keys(target.adapter.rooms[roomName].sockets).filter(id => id !== target.id);
+  if (!target.adapter.rooms[roomName]) {
+    return false;
+  }
+
+  return _.keys(target.adapter.rooms[roomName].sockets).filter(id => id !== target.id)[0];
 };
 
 io.on('connect', socket => {
   if (!clients[socket.id]) {
     clients[socket.id] = {
       userName: null,
+      peerId: null,
       rooms: []
     };
   }
@@ -70,6 +84,8 @@ io.on('connect', socket => {
           const isTargetExisted = roomMembers.filter(id => id === socket.id).length;
 
           if (!isTargetExisted) {
+            delete clients[socket.id];
+
             return io.to(roomName).emit('disconnect', {
               message: `${targetName} has left the room!`
             });
@@ -78,22 +94,24 @@ io.on('connect', socket => {
       });
     }
 
+    delete clients[socket.id];
+
     console.log(`${socket.id} disconnected`);
   });
 
-  socket.on('play', ({ roomName, keyNumber }) => {
+  socket.on('play note', ({ roomName, keyNumber }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
     console.log('play: ', keyNumber);
     io.to(counterpartId).emit('play', keyNumber);
   });
 
-  socket.on('stop', ({ roomName, keyNumber }) => {
+  socket.on('stop note', ({ roomName, keyNumber }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
     console.log('stop: ', keyNumber);
     io.to(counterpartId).emit('stop', keyNumber);
   });
 
-  socket.on('change', ({ roomName, instrumentName, noteRange }) => {
+  socket.on('change config', ({ roomName, instrumentName, noteRange }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
     console.log('change: ', noteRange, instrumentName);
     io.to(counterpartId).emit('change', {
@@ -102,13 +120,38 @@ io.on('connect', socket => {
     });
   });
 
-  socket.on('send', ({ roomName, message }) => {
+  socket.on('send message', ({ roomName, message }) => {
     const userName = clients[socket.id].userName;
 
-    io.to(roomName).emit('receive', {
+    io.to(roomName).emit('receive message', {
       message,
       userName
     });
+  });
+
+  socket.on('voice connection', ({ peerId, roomName }) => {
+    const counterpartId = getCounterpartIds(socket, roomName);
+
+    if (counterpartId) { //상대방이 있으면 내아이디 보내기
+      const counterpartPeerId = clients[counterpartId].peerId;
+
+      io.to(counterpartId).emit('receive peerId', peerId);
+      io.to(socket.id).emit('receive peerId', counterpartPeerId);
+    }
+
+    clients[socket.id].peerId = peerId;
+
+    console.log('Peerjs id:', peerId);
+  });
+
+  socket.on('voice disconnection', roomName => {
+    const counterpartId = getCounterpartIds(socket, roomName);
+
+    if (counterpartId) {
+      io.to(counterpartId).emit('hang up', true);
+    } else {
+      io.to(socket.id).emit('hang up', false);
+    }
   });
 });
 

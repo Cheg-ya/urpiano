@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const fs = require('fs');
 
 const outputDirectory = 'dist';
 
@@ -44,6 +45,11 @@ module.exports = {
     host: '0.0.0.0',
     port: 3000,
     open: false,
+    https: {
+      key: fs.readFileSync('./src/server/credential/server.csr.key'),
+      cert: fs.readFileSync('./src/server/credential/server.crt'),
+      ca: fs.readFileSync('./src/server/credential/rootSSL.pem')
+    },
     proxy: {
       '/api': 'http://localhost:8080'
     },

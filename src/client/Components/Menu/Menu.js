@@ -29,7 +29,6 @@ class Menu extends Component {
           <div className="menuBtnCover">
             <button className="menuBtn home"><Link to="/">Home</Link></button>
             <button className="menuBtn duo" onClick={this.duoBtnClick}>Duo</button>
-            <button className="menuBtn login">Login</button>
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ class Namespace extends Component {
 
     const { namespace, invalid } = this.state;
 
-    if (namespace.length < 5 && !invalid) {
+    if (namespace.length < 3 && !invalid) {
       return this.setState(() => {
         return {
           invalid: true
@@ -38,7 +38,7 @@ class Namespace extends Component {
       });
     }
 
-    if (namespace.length >= 5){
+    if (namespace.length >= 3){
       this.setState(() => {
         return {
           displayConfirm: true
@@ -107,7 +107,7 @@ class Namespace extends Component {
             value={namespace}
             onChange={this.handleOnChange}
           />
-          {invalid && <label><IoIosWarning />At least 5 letters required</label>}
+          {invalid && <label><IoIosWarning />At least 3 letters required</label>}
           <button className="submitBtn" type="submit">Create Room</button>
         </div>
       </form>

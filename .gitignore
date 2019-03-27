@@ -3,3 +3,4 @@ node_modules
 *.log
 yarn.lock
 src/server/config
+src/server/credential

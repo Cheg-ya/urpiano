@@ -1,0 +1,23 @@
+.voiceWrapper {
+  position: fixed;
+  bottom: 5%;
+  left: 1%;
+
+  .voiceBtnCover {
+    display: inline-block;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 2rem;
+
+    span > svg {
+      vertical-align: bottom;
+      height: 38.4px;
+    }
+  }
+
+  .btnCover {
+    display: inline-block;
+  }
+}

@@ -1,16 +1,19 @@
 import CounterpartPiano from '../CounterpartPiano/CounterpartPiano';
 import ResizablePiano from '../ResizablePiano/ResizablePiano';
 import DimensionsProvider from '../DimensionsProvider/DimensionsProvider';
-import React, { Component, Fragment } from 'react';
 import NameInput from '../NameInput/NameInput';
+import VoiceChat from '../VoiceChat/VoiceChat';
+import ChatRoom from '../ChatRoom/ChatRoom';
+import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal';
+import React, { Component, Fragment } from 'react';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 import './Duo.scss';
-import ChatRoom from '../ChatRoom/ChatRoom';
-import Loader from 'react-loader-spinner'
 
-const socket = io.connect('http://192.168.0.61:8080');
+const socket = io.connect('https://192.168.0.61:8080', { secure: true });
+// const socket = io.connect('http://192.168.0.136:8080');
+// const socket = io.connect('https://localhost:8080', { secure: true });
 
 class Duo extends Component {
   constructor(props) {
@@ -19,15 +22,15 @@ class Duo extends Component {
     this.state = {
       log: [],
       joined: false,
-      isChatMode: false,
-      partnerJoined: false
+      partnerJoined: false,
+      isChatMode: false
     };
 
+    this.roomName = this.props.match.params.room_name;
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);
     this.openChatRoom = this.openChatRoom.bind(this);
     this.onSendMessage = this.onSendMessage.bind(this);
-    this.displayRoomLog = this.displayRoomLog.bind(this);
     this.onChangeConfig = this.onChangeConfig.bind(this);
     this.onPlayNoteInput = this.onPlayNoteInput.bind(this);
     this.onStopNoteInput = this.onStopNoteInput.bind(this);
@@ -59,7 +62,7 @@ class Duo extends Component {
   }
 
   createRoom(userName) {
-    const roomName = this.props.match.params.room_name;
+    const roomName = this.roomName;
 
     socket.open();
 
@@ -106,22 +109,12 @@ class Duo extends Component {
       });
     });
 
-    socket.on('receive', message => {
+    socket.on('receive message', message => {
       this.setState(prevState => {
         return {
           log: prevState.log.concat(message)
         };
       });
-    });
-  }
-
-  displayRoomLog() {
-    const { log } = this.state;
-
-    return log.slice(-3).map(message => {
-      return (
-        <div key={Math.random()}>{message}</div>
-      );
     });
   }
 
@@ -131,9 +124,9 @@ class Duo extends Component {
   }
 
   onChangeConfig(newConfig) {
-    const roomName = this.props.match.params.room_name;
+    const roomName = this.roomName;
 
-    socket.emit('change', {
+    socket.emit('change config', {
       roomName,
       instrumentName: newConfig.instrumentName,
       noteRange: newConfig.noteRange
@@ -141,18 +134,18 @@ class Duo extends Component {
   }
 
   onPlayNoteInput(keyNumber) {
-    const roomName = this.props.match.params.room_name;
+    const roomName = this.roomName;
 
-    socket.emit('play', {
+    socket.emit('play note', {
       roomName,
       keyNumber
     });
   }
 
   onStopNoteInput(keyNumber) {
-    const roomName = this.props.match.params.room_name;
+    const roomName = this.roomName;
 
-    socket.emit('stop', {
+    socket.emit('stop note', {
       roomName,
       keyNumber
     });
@@ -167,9 +160,9 @@ class Duo extends Component {
   }
 
   onSendMessage(message) {
-    const roomName = this.props.match.params.room_name;
+    const roomName = this.roomName;
 
-    socket.emit('send', {
+    socket.emit('send message', {
       roomName,
       message
     });
@@ -180,12 +173,20 @@ class Duo extends Component {
 
     return (
       <div className="duoContainer">
-        <ChatRoom
-          messages={log}
-          isChatMode={isChatMode}
-          onClickChange={this.openChatRoom}
-          onSubmitMessage={this.onSendMessage}
-        />
+        {joined &&
+          <Fragment>
+            <ChatRoom
+              messages={log}
+              isChatMode={isChatMode}
+              onClickChange={this.openChatRoom}
+              onSubmitMessage={this.onSendMessage}
+            />
+            <VoiceChat
+              socket={socket}
+              onConnectVoice={this.connectVoiceChat}
+            />
+          </Fragment>
+        }
         <div className="duoCover">
           <div className="imageBackgroundCover">
             <img className="backgroundImage" src="https://images.unsplash.com/photo-1552186118-22d86b3559b7?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2500&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9" alt=""/>

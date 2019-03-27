@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { IoIosChatbubbles } from 'react-icons/io';
 import Modal from '../Modal/Modal';
 import './ChatRoom.scss';
@@ -11,9 +11,22 @@ class ChatRoom extends Component {
       message: ''
     };
 
+    this.ref = createRef();
     this.handleMessage = this.handleMessage.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.ref.current) {
+      this.ref.current.scrollTop = this.ref.current.scrollHeight;
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.ref.current) {
+      this.ref.current.scrollTop = this.ref.current.scrollHeight;
+    }
   }
 
   handleOnClick() {
@@ -87,7 +100,7 @@ class ChatRoom extends Component {
           <div className="roomHeader">
             <IoIosChatbubbles /><span>Chat Room</span>
           </div>
-          <ul className="messageCover">
+          <ul className="messageCover" ref={this.ref}>
             {this.displayMessage()}
           </ul>
           <form className="messageForm" onSubmit={this.handleOnSubmit}>

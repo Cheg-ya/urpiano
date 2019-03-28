@@ -8,12 +8,28 @@
   border-radius: 10px;
   border: 1px solid gray;
   padding: 5px;
-  cursor: pointer;
   transition: 0.6s;
+  cursor: pointer;
 }
 
 .chatBtn:hover {
   opacity: 0.6;
+}
+
+.messageAlert {
+  position: fixed;
+  bottom: 5%;
+  right: 1%;
+  z-index: 1;
+  color: white;
+  font-size: 1.2rem;
+  background-color: black;
+  border-radius: 5px;
+  border: 1px solid gray;
+  padding: 5px 10px;
+  transition: 0.6s;
+  animation: rightToLeft 1s ease-in-out;
+  cursor: pointer;
 }
 
 .chatRoomWrapper {
@@ -25,7 +41,8 @@
   border-radius: 10px;
   height: 400px;
   width: 300px;
-  animation: rightToLeft .5s ease-in-out;
+  animation: rightToLeft 1s ease-in-out;
+  cursor: pointer;
 
   .roomHeader {
     height: 10%;
@@ -98,6 +115,7 @@
       color: white;
       border-left: 1px solid white;
       transition: 0.5s;
+      cursor: pointer;
     }
 
     button:hover {
@@ -108,11 +126,15 @@
 }
 
 @keyframes rightToLeft {
-  from {
+  0% {
     right: -50%;
   }
 
-  to {
+  80% {
+    right: 3%;
+  }
+
+  100% {
     right: 1%;
   }
 }

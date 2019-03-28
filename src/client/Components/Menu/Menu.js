@@ -16,11 +16,11 @@ class Menu extends Component {
     }
   }
 
- duoBtnClick(e) {
-  if (e.target === e.currentTarget) {
-    this.props.onClickOpen();
+  duoBtnClick(e) {
+    if (e.target === e.currentTarget) {
+      this.props.onClickOpen();
+    }
   }
- }
 
   render() {
     return (

@@ -68,8 +68,9 @@ class PianoConfig extends Component {
       return (
         <option key={number} value={number} disabled={number >= (lastNote - 28)}>
           {MidiNumbers.getAttributes(number).note}
-        </option>)
-      });
+        </option>
+      );
+    });
   }
 
   createLastNoteOptions() {
@@ -79,13 +80,16 @@ class PianoConfig extends Component {
       return (
         <option key={number} value={number} disabled={number <= (firstNote + 28)}>
           {MidiNumbers.getAttributes(number).note}
-        </option>)
-      });
+        </option>
+      );
+    });
   }
 
   changeInstrument(e) {
+    const instrumentName = e.target.value;
+
     this.props.setConfig({
-      instrumentName: e.target.value
+      instrumentName
     });
   }
 

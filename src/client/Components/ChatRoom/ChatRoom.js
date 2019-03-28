@@ -1,5 +1,6 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, createRef, Fragment } from 'react';
 import { IoIosChatbubbles } from 'react-icons/io';
+import PropTypes from 'prop-types';
 import Modal from '../Modal/Modal';
 import './ChatRoom.scss';
 
@@ -8,13 +9,16 @@ class ChatRoom extends Component {
     super(props);
 
     this.state = {
-      message: ''
+      isChatRoomOpen: false,
+      message: '',
+      alertMessage: false
     };
 
     this.ref = createRef();
+    this.roomName = location.pathname.split('/').slice(-1);
     this.handleMessage = this.handleMessage.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
-    this.handleOnSubmit = this.handleOnSubmit.bind(this);
+    this.onSendMessage = this.onSendMessage.bind(this);
   }
 
   componentDidMount() {
@@ -23,14 +27,36 @@ class ChatRoom extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if (this.ref.current) {
       this.ref.current.scrollTop = this.ref.current.scrollHeight;
+    }
+
+    const { isChatRoomOpen, alertMessage } = this.state;
+
+    if (!isChatRoomOpen && !alertMessage) {
+      const prevMessages = prevProps.messages;
+      const currentMessages = this.props.messages;
+
+      if (prevMessages.length < currentMessages.length) {
+        this.setState(() => {
+          return {
+            alertMessage: true
+          };
+        });
+      }
     }
   }
 
   handleOnClick() {
-    this.props.onClickChange();
+    this.props.changeMode();
+
+    this.setState(prevState => {
+      return {
+        isChatRoomOpen: !prevState.isChatRoomOpen,
+        alertMessage: false
+      };
+    });
   }
 
   displayMessage() {
@@ -66,14 +92,18 @@ class ChatRoom extends Component {
     });
   }
 
-  handleOnSubmit(e) {
+  onSendMessage(e) {
     e.preventDefault();
 
     const message = this.state.message;
+    const roomName = this.roomName;
 
     if (!message.length) return;
 
-    this.props.onSubmitMessage(this.state.message);
+    this.props.socket.emit('send message', {
+      roomName,
+      message
+    });
 
     this.setState(() => {
       return {
@@ -83,14 +113,24 @@ class ChatRoom extends Component {
   }
 
   render() {
-    const { isChatMode } = this.props;
-    const { message } = this.state;
+    const { message, isChatRoomOpen, alertMessage } = this.state;
 
-    if (!isChatMode) {
+    if (!isChatRoomOpen) {
+      const latestMsg = this.props.messages.slice(-1)[0];
+
       return (
-        <div className="chatBtn" onClick={this.handleOnClick}>
-          <IoIosChatbubbles /><span>Chat</span>
-        </div>
+        <Fragment>
+          {alertMessage
+          ? <div className="messageAlert" onClick={this.handleOnClick}>
+              <small>Message Alert</small>
+              <div>{!latestMsg.userName ? latestMsg.message : 'You\'ve got new messages'}</div>
+            </div>
+          :
+            <div className="chatBtn" onClick={this.handleOnClick}>
+              <IoIosChatbubbles /><span>Chat</span>
+            </div>
+          }
+        </Fragment>
       );
     }
 
@@ -103,7 +143,7 @@ class ChatRoom extends Component {
           <ul className="messageCover" ref={this.ref}>
             {this.displayMessage()}
           </ul>
-          <form className="messageForm" onSubmit={this.handleOnSubmit}>
+          <form className="messageForm" onSubmit={this.onSendMessage}>
             <input type="text" placeholder="Type message" value={message} onChange={this.handleMessage} />
             <div className="sendBtnCover">
               <button type="submit">Send</button>
@@ -116,3 +156,9 @@ class ChatRoom extends Component {
 }
 
 export default ChatRoom;
+
+ChatRoom.propTypes = {
+  socket: PropTypes.object.isRequired,
+  messages: PropTypes.array.isRequired,
+  changeMode: PropTypes.func.isRequired
+};

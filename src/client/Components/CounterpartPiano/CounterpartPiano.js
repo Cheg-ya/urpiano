@@ -4,8 +4,6 @@ import SoundPlayer from '../SoundPlayer/SoundPlayer';
 import PianoConfig from '../PianoConfig/PianoConfig';
 import PropTypes from 'prop-types';
 
-const audioContext = new AudioContext();
-
 class CounterpartPiano extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +16,7 @@ class CounterpartPiano extends Component {
       }
     };
 
+    this.audioContext = new AudioContext();
     this.setConfig = this.setConfig.bind(this);
   }
 
@@ -36,7 +35,7 @@ class CounterpartPiano extends Component {
     return (
       <SoundPlayer
         instrumentName={instrumentName}
-        audioContext={audioContext}
+        audioContext={this.audioContext}
         socket={this.props.socket}
         setConfig={this.setConfig}
         render={({ isLoading, playNote, stopNote }) => (
@@ -47,7 +46,7 @@ class CounterpartPiano extends Component {
               playNote={playNote}
               stopNote={stopNote}
               disabled={isLoading}
-              {...this.props}
+              className={this.props.className ? this.props.className : null}
             />
             <PianoConfig 
               instrumentName={instrumentName}

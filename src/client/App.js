@@ -17,7 +17,6 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      endpoint: 'http://localhost:8080',
       isMenuOpen: false,
       isNamespaceFormOpen: '',
       roomName: ''

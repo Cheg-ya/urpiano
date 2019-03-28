@@ -1,20 +1,31 @@
-const _ = require('lodash');
 const socket = require('socket.io');
 const express = require('express');
 const http = require('https');
+const path = require('path');
+const _ = require('lodash');
 const fs = require('fs');
 
-const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
-const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
+const privateKey  = fs.readFileSync(__dirname + '/credential/artisee.csr.key');
+const certificate = fs.readFileSync(__dirname + '/credential/artisee.crt');
 const options = {
   key: privateKey,
-  cert: certificate,
-  ca: fs.readFileSync(__dirname + '/credential/rootSSL.pem')
+  cert: certificate
 };
 
 const app = express();
 const server = http.createServer(options, app);
 const io = socket(server);
+
+if (process.env.NODE_ENV === "production") {
+  console.log("Production");
+  app.use('/', express.static('dist'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirName, 'dist', 'index.html'));
+  });
+} else {
+  console.log("Development");
+}
+
 
 const clients = {};
 
@@ -84,10 +95,13 @@ io.on('connect', socket => {
           const isTargetExisted = roomMembers.filter(id => id === socket.id).length;
 
           if (!isTargetExisted) {
+            const counterpartId = getCounterpartIds(socket, roomName);
             delete clients[socket.id];
 
+            io.to(counterpartId).emit('reset');
+
             return io.to(roomName).emit('disconnect', {
-              message: `${targetName} has left the room!`
+              userName: targetName
             });
           }
         }
@@ -132,7 +146,7 @@ io.on('connect', socket => {
   socket.on('voice connection', ({ peerId, roomName }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
 
-    if (counterpartId) { //상대방이 있으면 내아이디 보내기
+    if (counterpartId) {
       const counterpartPeerId = clients[counterpartId].peerId;
 
       io.to(counterpartId).emit('receive peerId', peerId);
@@ -140,8 +154,6 @@ io.on('connect', socket => {
     }
 
     clients[socket.id].peerId = peerId;
-
-    console.log('Peerjs id:', peerId);
   });
 
   socket.on('voice disconnection', roomName => {
@@ -150,17 +162,10 @@ io.on('connect', socket => {
     if (counterpartId) {
       io.to(counterpartId).emit('hang up', true);
     } else {
+      console.log('voice disconnection: counterpartId not exist')
       io.to(socket.id).emit('hang up', false);
     }
   });
 });
 
 server.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${process.env.PORT || 8080}!`));
-
-app.use(express.static('dist'));
-
-if (process.env.NODE_ENV === "production") {
-  console.log("Production");
-} else {
-  console.log("Development");
-}

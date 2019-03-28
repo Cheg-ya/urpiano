@@ -8,7 +8,7 @@ class Namespace extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      namespace: '',
+      roomName: '',
       invalid: false,
       displayConfirm: false,
       copied: false
@@ -28,9 +28,9 @@ class Namespace extends Component {
   handleOnSubmit(e) {
     e.preventDefault();
 
-    const { namespace, invalid } = this.state;
+    const { roomName, invalid } = this.state;
 
-    if (namespace.length < 3 && !invalid) {
+    if (roomName.length < 3 && !invalid) {
       return this.setState(() => {
         return {
           invalid: true
@@ -38,28 +38,26 @@ class Namespace extends Component {
       });
     }
 
-    if (namespace.length >= 3){
-      this.setState(() => {
-        return {
-          displayConfirm: true
-        };
-      });
-    }
+    this.setState(() => {
+      return {
+        displayConfirm: true
+      };
+    });
   }
 
   handleOnChange(e) {
-    const namespace = e.target.value.trim();
+    const roomName = e.target.value.trim();
 
     this.setState(() => {
       return {
-        namespace
+        roomName
       };
     });
   }
 
   handleConfirm() {
-    const { namespace } = this.state;
-    this.props.onConfirm(namespace);
+    const { roomName } = this.state;
+    this.props.onConfirm(roomName);
   }
 
   copyInvitationUrl() {
@@ -71,13 +69,13 @@ class Namespace extends Component {
   }
 
   render() {
-    const { namespace, invalid, displayConfirm, copied } = this.state;
+    const { roomName, invalid, displayConfirm, copied } = this.state;
 
     if (displayConfirm) {
       return (
         <div className="confirmContainer">
           <div className="formLogo">UP</div>
-          <CopyToClipboard text={`${location.origin}/duo/${namespace}`}>
+          <CopyToClipboard text={`${location.origin}/duo/${roomName}`}>
             <button className="copyBtn" onClick={this.copyInvitationUrl}>
               {copied ? 'Copied!' : 'Copy'}
             </button>
@@ -85,7 +83,7 @@ class Namespace extends Component {
           <div className="confirmCover">
             <label>Invitation URL:</label>
             <div className="url">
-              {`${location.origin}/duo/${namespace}`}
+              {`${location.origin}/duo/${roomName}`}
             </div>
             <div className="confirmBtnCover">
               <button className="confirmBtn" onClick={this.handleConfirm}>Confirm</button>
@@ -96,15 +94,15 @@ class Namespace extends Component {
     }
 
     return (
-      <form className="nameSpaceForm" onSubmit={this.handleOnSubmit}>
+      <form className="roomNameForm" onSubmit={this.handleOnSubmit}>
         <div className="formLogo">UP</div>
         <i className="closeBtn fas fa-times-circle" onClick={this.onClickClose}></i>
         <div className="inputCover">
           <input
             type="text"
-            className="namespaceInput"
+            className="roomNameInput"
             placeholder="Type room name"
-            value={namespace}
+            value={roomName}
             onChange={this.handleOnChange}
           />
           {invalid && <label><IoIosWarning />At least 3 letters required</label>}

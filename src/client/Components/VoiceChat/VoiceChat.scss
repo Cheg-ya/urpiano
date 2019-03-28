@@ -19,5 +19,28 @@
 
   .btnCover {
     display: inline-block;
+
+    .startBtn, .stopBtn {
+      background-color: transparent;
+      border-radius: 10px;
+      padding: 5px;
+      font-size: 2rem;
+      margin-left: 5px;
+
+      svg {
+        vertical-align: bottom;
+      height: 38.4px;
+      }
+    }
+
+    .startBtn {
+      color: green;
+      border: 1px solid green;
+    }
+
+    .stopBtn {
+      color: red;
+      border: 1px solid red;
+    }
   }
 }

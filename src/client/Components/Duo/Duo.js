@@ -1,19 +1,15 @@
+import DimensionsProvider from '../DimensionsProvider/DimensionsProvider';
 import CounterpartPiano from '../CounterpartPiano/CounterpartPiano';
 import ResizablePiano from '../ResizablePiano/ResizablePiano';
-import DimensionsProvider from '../DimensionsProvider/DimensionsProvider';
 import NameInput from '../NameInput/NameInput';
 import VoiceChat from '../VoiceChat/VoiceChat';
 import ChatRoom from '../ChatRoom/ChatRoom';
 import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal';
 import React, { Component, Fragment } from 'react';
-import io from 'socket.io-client';
 import PropTypes from 'prop-types';
+import io from 'socket.io-client';
 import './Duo.scss';
-
-const socket = io.connect('https://192.168.0.61:8080', { secure: true });
-// const socket = io.connect('http://192.168.0.136:8080');
-// const socket = io.connect('https://localhost:8080', { secure: true });
 
 class Duo extends Component {
   constructor(props) {
@@ -26,11 +22,12 @@ class Duo extends Component {
       isChatMode: false
     };
 
+    // this.socket = io.connect('https://192.168.0.61:8080');
+    this.socket = io.connect('https://192.168.55.84:8080'); //artisee
     this.roomName = this.props.match.params.room_name;
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);
     this.openChatRoom = this.openChatRoom.bind(this);
-    this.onSendMessage = this.onSendMessage.bind(this);
     this.onChangeConfig = this.onChangeConfig.bind(this);
     this.onPlayNoteInput = this.onPlayNoteInput.bind(this);
     this.onStopNoteInput = this.onStopNoteInput.bind(this);
@@ -46,7 +43,7 @@ class Duo extends Component {
     const currentRoomName = this.props.match.params.room_name;
 
     if (prevRoomName !== currentRoomName) {
-      socket.close();
+      this.socket.close();
 
       this.setState(() => {
         return {
@@ -58,22 +55,22 @@ class Duo extends Component {
   }
 
   componentWillUnmount() {
-    socket.close();
+    this.socket.close();
   }
 
   createRoom(userName) {
     const roomName = this.roomName;
 
-    socket.open();
+    this.socket.open();
 
-    socket.emit('join', {
+    this.socket.emit('join', {
       roomName,
       userName
     });
   }
 
   socketEventHandler() {
-    socket.on('join', result => {
+    this.socket.on('join', result => {
       const { joined, message, partnerJoined } = result;
 
       if (joined && !partnerJoined) {
@@ -94,22 +91,22 @@ class Duo extends Component {
         });
 
       } else {
-        socket.close();
+        this.socket.close();
         this.props.history.replace('/');
         alert(message);
       }
     });
 
-    socket.on('disconnect', message => {
+    this.socket.on('disconnect', ({ userName }) => {
       this.setState(prevState => {
         return {
           partnerJoined: false,
-          log: prevState.log.concat(message)
+          log: prevState.log.concat({ message: `${userName} has left the room` })
         };
       });
     });
 
-    socket.on('receive message', message => {
+    this.socket.on('receive message', message => {
       this.setState(prevState => {
         return {
           log: prevState.log.concat(message)
@@ -119,14 +116,14 @@ class Duo extends Component {
   }
 
   getOutOfRoom() {
-    socket.close();
+    this.socket.close();
     this.props.history.replace('/');
   }
 
   onChangeConfig(newConfig) {
     const roomName = this.roomName;
 
-    socket.emit('change config', {
+    this.socket.emit('change config', {
       roomName,
       instrumentName: newConfig.instrumentName,
       noteRange: newConfig.noteRange
@@ -136,16 +133,20 @@ class Duo extends Component {
   onPlayNoteInput(keyNumber) {
     const roomName = this.roomName;
 
-    socket.emit('play note', {
+    this.socket.emit('play note', {
       roomName,
       keyNumber
     });
   }
 
-  onStopNoteInput(keyNumber) {
+  onStopNoteInput(keyNumber, { prevActiveNotes }) {
+    if (!prevActiveNotes.length) {
+      return;
+    }
+
     const roomName = this.roomName;
 
-    socket.emit('stop note', {
+    this.socket.emit('stop note', {
       roomName,
       keyNumber
     });
@@ -159,15 +160,6 @@ class Duo extends Component {
     });
   }
 
-  onSendMessage(message) {
-    const roomName = this.roomName;
-
-    socket.emit('send message', {
-      roomName,
-      message
-    });
-  }
-
   render() {
     const { joined, isChatMode, log, partnerJoined } = this.state;
 
@@ -176,14 +168,12 @@ class Duo extends Component {
         {joined &&
           <Fragment>
             <ChatRoom
+              socket={this.socket}
               messages={log}
-              isChatMode={isChatMode}
-              onClickChange={this.openChatRoom}
-              onSubmitMessage={this.onSendMessage}
+              changeMode={this.openChatRoom}
             />
             <VoiceChat
-              socket={socket}
-              onConnectVoice={this.connectVoiceChat}
+              socket={this.socket}
             />
           </Fragment>
         }
@@ -198,7 +188,7 @@ class Duo extends Component {
                       {({ containerWidth }) => (
                         <ResizablePiano
                           className="theme"
-                          socket={socket}
+                          socket={this.socket}
                           width={containerWidth}
                           isChatMode={isChatMode}
                           onPlayNoteInput={this.onPlayNoteInput}
@@ -219,7 +209,7 @@ class Duo extends Component {
                     {({ containerWidth }) => (
                       <CounterpartPiano
                         className="theme"
-                        socket={socket}
+                        socket={this.socket}
                         width={containerWidth}
                       />
                     )}

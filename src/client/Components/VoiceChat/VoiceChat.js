@@ -1,5 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { MdRecordVoiceOver } from 'react-icons/md';
+import { IoIosMic, IoIosMicOff } from 'react-icons/io';
+import PropTypes from 'prop-types';
 import './VoiceChat.scss';
 
 class VoiceChat extends Component {
@@ -7,33 +9,49 @@ class VoiceChat extends Component {
     super(props);
 
     this.state = {
-      openOptions: false,
-      lastPeerId: null,
       counterpartId: null,
+      lastPeerId: null,
       onAir: false
     };
 
     this.ref = createRef();
+    this.call = null;
     this.caller = null;
     this.callee = null;
     this.peer = new Peer(null, { debug: 3 });;
-    this.call = null;
     this.roomName = location.pathname.split('/').slice(-1);
-    this.showOptions = this.showOptions.bind(this);
-    this.onClickStart = this.onClickStart.bind(this);
     this.onClickStop = this.onClickStop.bind(this);
-    this.initializeVoiceChat = this.initializeVoiceChat.bind(this);
+    this.onClickStart = this.onClickStart.bind(this);
+    this.resetVoice = this.resetVoiceChat.bind(this);
+    this.socketEventHandler = this.socketEventHandler.bind(this);
   }
 
   componentDidMount() {
-    this.initializeVoiceChat();
+    this.socketEventHandler();
   }
 
   componentWillUnmount() {
     this.peer.disconnect();
   }
 
-  initializeVoiceChat() {
+  resetVoiceChat() {
+    if (this.call) {
+      this.call.close();
+      this.call = null;
+    }
+
+    if (this.caller) {
+      this.caller.close();
+      this.caller = null;
+    }
+
+    if (this.callee) {
+      this.callee.close();
+      this.callee = null;
+    }
+  }
+
+  socketEventHandler() {
     this.peer.on('open', id => {
       this.props.socket.emit('voice connection', { peerId: id, roomName: this.roomName });
 
@@ -44,45 +62,54 @@ class VoiceChat extends Component {
       });
     });
 
-    this.peer.on('disconnected', () => { // when user out of the page
-      if (this.call) { // during the call
-        this.call.close();
-      }
-    });
-
     this.peer.on('call', async call => {
-      if (this.call) { // reject extra incoming call
-        alert('Already connected');
-        call.close();
+      if (this.call) {
+        return;
       }
 
       this.call = call;
 
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }); // get mic
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        if (this.call === null) {
+          return;
+        }
 
         this.callee = new AudioContext();
         const microphone = this.callee.createMediaStreamSource(mediaStream);
         microphone.connect(this.callee.destination);
 
-        call.answer(mediaStream); // answer the call
+        call.answer(mediaStream);
+
+        this.call.on('stream', remoteStream => {
+          this.ref.current.srcobject = remoteStream;
+
+          this.setState(prevState => {
+            return {
+              onAir: !prevState.onAir
+            };
+          });
+        });
 
       } catch (err) {
+        console.log(err);
         return alert(err.message);
       }
+    });
 
-      this.call.on('stream', remoteStream => { // incoming call from counterpart
-        this.ref.current.srcObject = remoteStream;
-      });
+    this.props.socket.on('reset', () => {
+      this.resetVoiceChat();
 
-      this.setState(prevState => {
+      this.setState(() => {
         return {
-          onAir: !prevState.onAir
+          counterpartId: null,
+          onAir: false
         };
       });
     });
 
-    this.props.socket.on('receive peerId', id => { // store counterpart id
+    this.props.socket.on('receive peerId', id => {
       this.setState(() => {
         return {
           counterpartId: id
@@ -92,18 +119,7 @@ class VoiceChat extends Component {
 
     this.props.socket.on('hang up', result => {
       if (result) {
-        this.call.close();
-        this.call = null;
-
-        if (this.caller) {
-          this.caller.close();
-          this.caller = null;
-        }
-
-        if (this.callee) {
-          this.callee.close();
-          this.callee = null;
-        }
+        this.resetVoiceChat();
 
         this.setState(() => {
           return {
@@ -115,15 +131,15 @@ class VoiceChat extends Component {
   }
 
   async onClickStart() {
-    if (this.call) { // reject extra incoming calls
-      this.call.close();
+    if (this.call) {
+      return;
     }
 
-    const id = this.state.counterpartId;
+    const counterpartId = this.state.counterpartId;
 
-    this.setState(prevState => {
+    this.setState(() => {
       return {
-        onAir: !prevState.onAir
+        onAir: true
       };
     });
 
@@ -134,72 +150,59 @@ class VoiceChat extends Component {
       const microphone = this.caller.createMediaStreamSource(mediaStream);
       microphone.connect(this.caller.destination);
 
-      this.call = this.peer.call(id, mediaStream);
-
-      this.call.on('stream', remoteStream => { // received counterpart mic stream
-        this.ref.current.srcObject = remoteStream;
-
-        this.setState(() => {
-          return {
-            stream: remoteStream
-          };
-        });
-      });
+      this.call = this.peer.call(counterpartId, mediaStream);
 
     } catch (err) {
+      console.log(err);
       return alert(err.message);
     }
+
+    this.call.on('stream', remoteStream => {
+      this.ref.current.srcobject = remoteStream;
+
+      this.setState(() => {
+        return {
+          stream: remoteStream
+        };
+      });
+    });
   }
 
   onClickStop() {
-    this.call.close();
-    this.call = null;
+    this.resetVoiceChat();
 
-    if (this.caller) {
-      this.caller.close();
-      this.caller = null;
-    }
-
-    if (this.callee) {
-      this.callee.close();
-      this.callee = null;
-    }
-
-    this.setState(prevState => {
+    this.setState(() => {
       return {
-        onAir: !prevState.onAir
+        onAir: false
       };
     });
 
     this.props.socket.emit('voice disconnection', this.roomName);
   }
 
-  showOptions() {
-    this.setState(prevState => {
-      return {
-        openOptions: !prevState.openOptions
-      };
-    });
-  }
-
   render() {
-    const { openOptions, counterpartId, onAir } = this.state;
-
+    const { counterpartId, onAir } = this.state;
+    console.log(this.props);
     return (
       <div className="voiceWrapper">
-        <audio autoPlay ref={this.ref} srcObject=""></audio>
-        <div className="voiceBtnCover" onClick={this.showOptions}>
-          <span><MdRecordVoiceOver/>Voice</span>
-        </div>
-        {openOptions &&
-          <div className="btnCover">
-            <button className="startBtn" onClick={this.onClickStart} disabled={!counterpartId || onAir}>Start</button>
-            <button className="stopBtn" onClick={this.onClickStop} disabled={!onAir}>Stop</button>
+        <audio autoPlay ref={this.ref} srcobject=""></audio>
+        {!onAir && !counterpartId
+        ? <div className="voiceBtnCover">
+            <span><MdRecordVoiceOver/>Voice</span>
           </div>
+        : null
         }
+        <div className="btnCover">
+          {counterpartId && !onAir ? <button className="startBtn" onClick={this.onClickStart}><IoIosMic />Start</button> : null}
+          {onAir && <button className="stopBtn" onClick={this.onClickStop} disabled={!onAir}><IoIosMicOff />Stop</button>}
+        </div>
       </div>
     );
   }
 }
 
 export default VoiceChat;
+
+VoiceChat.propTypes = {
+  socket: PropTypes.object.isRequired
+};

@@ -5,8 +5,6 @@ import { Piano, MidiNumbers, KeyboardShortcuts } from 'react-piano';
 import PianoConfig from '../PianoConfig/PianoConfig';
 import PropTypes from 'prop-types';
 
-const audioContext = new AudioContext();
-
 class ResponsivePiano extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +18,7 @@ class ResponsivePiano extends Component {
       keyboardShortcutOffset: 0
     };
 
+    this.audioContext = new AudioContext();
     this.setConfig = this.setConfig.bind(this);
   }
 
@@ -43,7 +42,7 @@ class ResponsivePiano extends Component {
         {({ containerWidth }) => (
           <SoundfontProvider
             instrumentName={instrumentName}
-            audioContext={audioContext}
+            audioContext={this.audioContext}
             render={({ isLoading, playNote, stopNote }) => {
               return (
                 <Fragment>

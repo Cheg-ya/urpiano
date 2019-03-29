@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Modal component test renders children node when passed in 1`] = `
+<div
+  className="modalCover"
+  onClick={[Function]}
+>
+  <div>
+    Modal Component
+  </div>
+</div>
+`;
+
+exports[`Modal component test renders correctly 1`] = `
+<div
+  className="modalCover"
+  onClick={[Function]}
+/>
+`;

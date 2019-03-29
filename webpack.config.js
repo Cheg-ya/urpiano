@@ -46,8 +46,8 @@ module.exports = {
     port: 3000,
     open: false,
     https: {
-      key: fs.readFileSync('./src/server/credential/artisee.csr.key'),
-      cert: fs.readFileSync('./src/server/credential/artisee.crt'),
+      key: fs.readFileSync('./src/server/credential/server.csr.key'),
+      cert: fs.readFileSync('./src/server/credential/server.crt'),
       ca: fs.readFileSync('./src/server/credential/rootSSL.pem')
     },
     proxy: {

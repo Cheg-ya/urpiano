@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Single component test render correctly 1`] = `
+<div
+  className="singleContainer"
+>
+  <div
+    className="singleCover"
+  >
+    <div
+      className="imageBackgroundCover"
+    >
+      <img
+        alt=""
+        className="backgroundImage"
+        src="https://images.unsplash.com/photo-1552186118-22d86b3559b7?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2500&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9"
+      />
+    </div>
+    <div
+      className="pianoCover"
+    />
+  </div>
+</div>
+`;
+
+exports[`Single component test renders its children DOM node 1`] = `
+<div
+  className="singleContainer"
+>
+  <div
+    className="singleCover"
+  >
+    <div
+      className="imageBackgroundCover"
+    >
+      <img
+        alt=""
+        className="backgroundImage"
+        src="https://images.unsplash.com/photo-1552186118-22d86b3559b7?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2500&fit=max&ixid=eyJhcHBfaWQiOjcwNjZ9"
+      />
+    </div>
+    <div
+      className="pianoCover"
+    >
+      <div
+        className="target"
+      >
+        Hello
+      </div>
+    </div>
+  </div>
+</div>
+`;

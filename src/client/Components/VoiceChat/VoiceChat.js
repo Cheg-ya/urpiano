@@ -182,7 +182,7 @@ class VoiceChat extends Component {
 
   render() {
     const { counterpartId, onAir } = this.state;
-    console.log(this.props);
+
     return (
       <div className="voiceWrapper">
         <audio autoPlay ref={this.ref} srcobject=""></audio>

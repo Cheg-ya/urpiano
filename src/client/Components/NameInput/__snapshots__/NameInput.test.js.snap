@@ -1,0 +1,171 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NameInput component test custom methods test calls handleOnChange when change event occurred 1`] = `
+<form
+  className="nameInputForm"
+  onSubmit={[Function]}
+>
+  <div
+    className="formLogo"
+  >
+    UP
+  </div>
+  <i
+    className="closeBtn fas fa-times-circle"
+    onClick={[Function]}
+  />
+  <div
+    className="inputCover"
+  >
+    <input
+      className="nameInputField"
+      onChange={[Function]}
+      placeholder="Type your name"
+      type="text"
+      value=""
+    />
+    <button
+      className="submitBtn"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;
+
+exports[`NameInput component test custom methods test calls handleOnSubmit and changes visibility of label tag when submit event occurred 1`] = `
+<form
+  className="nameInputForm"
+  onSubmit={[Function]}
+>
+  <div
+    className="formLogo"
+  >
+    UP
+  </div>
+  <i
+    className="closeBtn fas fa-times-circle"
+    onClick={[Function]}
+  />
+  <div
+    className="inputCover"
+  >
+    <input
+      className="nameInputField"
+      onChange={[Function]}
+      placeholder="Type your name"
+      type="text"
+      value=""
+    />
+    <button
+      className="submitBtn"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;
+
+exports[`NameInput component test custom methods test calls handleOnSubmit and changes visibility of label tag when submit event occurred 2`] = `
+<form
+  className="nameInputForm"
+  onSubmit={[Function]}
+>
+  <div
+    className="formLogo"
+  >
+    UP
+  </div>
+  <i
+    className="closeBtn fas fa-times-circle"
+    onClick={[Function]}
+  />
+  <div
+    className="inputCover"
+  >
+    <input
+      className="nameInputField"
+      onChange={[Function]}
+      placeholder="Type your name"
+      type="text"
+      value=""
+    />
+    <button
+      className="submitBtn"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;
+
+exports[`NameInput component test custom methods test calls onClickClose when click event occurred 1`] = `
+<form
+  className="nameInputForm"
+  onSubmit={[Function]}
+>
+  <div
+    className="formLogo"
+  >
+    UP
+  </div>
+  <i
+    className="closeBtn fas fa-times-circle"
+    onClick={[Function]}
+  />
+  <div
+    className="inputCover"
+  >
+    <input
+      className="nameInputField"
+      onChange={[Function]}
+      placeholder="Type your name"
+      type="text"
+      value=""
+    />
+    <button
+      className="submitBtn"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;
+
+exports[`NameInput component test render and props check renders correctly with state 1`] = `
+<form
+  className="nameInputForm"
+  onSubmit={[Function]}
+>
+  <div
+    className="formLogo"
+  >
+    UP
+  </div>
+  <i
+    className="closeBtn fas fa-times-circle"
+    onClick={[Function]}
+  />
+  <div
+    className="inputCover"
+  >
+    <input
+      className="nameInputField"
+      onChange={[Function]}
+      placeholder="Type your name"
+      type="text"
+      value=""
+    />
+    <button
+      className="submitBtn"
+      type="submit"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+`;

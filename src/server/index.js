@@ -5,8 +5,8 @@ const path = require('path');
 const _ = require('lodash');
 const fs = require('fs');
 
-const privateKey  = fs.readFileSync(__dirname + '/credential/artisee.csr.key');
-const certificate = fs.readFileSync(__dirname + '/credential/artisee.crt');
+const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
+const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
 const options = {
   key: privateKey,
   cert: certificate
@@ -22,6 +22,7 @@ if (process.env.NODE_ENV === "production") {
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirName, 'dist', 'index.html'));
   });
+
 } else {
   console.log("Development");
 }
@@ -82,6 +83,10 @@ io.on('connect', socket => {
   });
 
   socket.on('disconnect', () =>{
+    if (!clients[socket.id]) {
+      return;
+    }
+
     const targetName = clients[socket.id].userName;
     const joinedRooms = clients[socket.id].rooms;
     const currentRoomInfo = socket.adapter.rooms;

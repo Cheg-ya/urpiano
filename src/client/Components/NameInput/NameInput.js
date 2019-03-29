@@ -24,9 +24,9 @@ class NameInput extends Component {
   handleOnSubmit(e) {
     e.preventDefault();
 
-    const { name, invalid } = this.state;
+    const { name } = this.state;
 
-    if (name.length < 2 && !invalid) {
+    if (name.length < 2) {
       return this.setState(() => {
         return {
           invalid: true

@@ -94,5 +94,7 @@ export default class App extends Component {
 }
 
 App.propTypes = {
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };

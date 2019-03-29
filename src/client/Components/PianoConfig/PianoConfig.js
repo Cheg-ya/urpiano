@@ -17,7 +17,8 @@ class PianoConfig extends Component {
   }
 
   static defaultProps = {
-    setConfig: () => {}
+    setConfig: () => {},
+    keyboardShortcutOffset: 0
   };
 
   componentDidMount() {
@@ -155,5 +156,5 @@ PianoConfig.propTypes = {
   instrumentName: PropTypes.string.isRequired,
   keyboardShortcutOffset: PropTypes.number,
   noteRange: PropTypes.object.isRequired,
-  setConfig: PropTypes.func.isRequired
+  setConfig: PropTypes.func
 };

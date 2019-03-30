@@ -1,30 +1,42 @@
 const socket = require('socket.io');
 const express = require('express');
-const http = require('https');
-const path = require('path');
+const https = require('http');
 const _ = require('lodash');
 const fs = require('fs');
 
-const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
-const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
-const options = {
-  key: privateKey,
-  cert: certificate
-};
-
 const app = express();
-const server = http.createServer(options, app);
-const io = socket(server);
+let server;
+let io;
 
 if (process.env.NODE_ENV === "production") {
   console.log("Production");
-  app.use('/', express.static('dist'));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirName, 'dist', 'index.html'));
+  server = https.createServer(app);
+  io = socket(server);
+
+  app.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production' && (!req.secure) && (req.get('X-Forwarded-Proto') !== 'https')) {
+      res.redirect('https://' + req.get('Host') + req.url);
+    } else {
+      next();
+    }
+  });
+
+  app.use(express.static('dist'));
+  app.get('/*', (req, res) => {
+    res.sendFile('index.html', { root: './dist/' });  
   });
 
 } else {
   console.log("Development");
+  const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
+  const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
+  const options = {
+    key: privateKey,
+    cert: certificate
+  };
+
+  server = https.createServer(options, app);
+  io = socket(server);
 }
 
 
@@ -120,19 +132,17 @@ io.on('connect', socket => {
 
   socket.on('play note', ({ roomName, keyNumber }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
-    console.log('play: ', keyNumber);
     io.to(counterpartId).emit('play', keyNumber);
   });
 
   socket.on('stop note', ({ roomName, keyNumber }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
-    console.log('stop: ', keyNumber);
     io.to(counterpartId).emit('stop', keyNumber);
   });
 
   socket.on('change config', ({ roomName, instrumentName, noteRange }) => {
     const counterpartId = getCounterpartIds(socket, roomName);
-    console.log('change: ', noteRange, instrumentName);
+    
     io.to(counterpartId).emit('change', {
       instrumentName,
       noteRange
@@ -167,7 +177,6 @@ io.on('connect', socket => {
     if (counterpartId) {
       io.to(counterpartId).emit('hang up', true);
     } else {
-      console.log('voice disconnection: counterpartId not exist')
       io.to(socket.id).emit('hang up', false);
     }
   });

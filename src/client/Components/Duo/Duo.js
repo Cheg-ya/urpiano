@@ -22,8 +22,7 @@ class Duo extends Component {
       isChatMode: false
     };
 
-    this.socket = io.connect('https://192.168.0.61:8080');
-    // this.socket = io.connect('https://192.168.55.84:8080'); //artisee
+    this.socket = io.connect();
     this.roomName = this.props.match.params.room_name;
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);

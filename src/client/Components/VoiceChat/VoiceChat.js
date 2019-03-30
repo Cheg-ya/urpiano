@@ -18,7 +18,7 @@ class VoiceChat extends Component {
     this.call = null;
     this.caller = null;
     this.callee = null;
-    this.peer = new Peer(null, { debug: 3 });;
+    this.peer = new Peer(null, { debug: 2 });;
     this.roomName = location.pathname.split('/').slice(-1);
     this.onClickStop = this.onClickStop.bind(this);
     this.onClickStart = this.onClickStart.bind(this);
@@ -93,7 +93,6 @@ class VoiceChat extends Component {
         });
 
       } catch (err) {
-        console.log(err);
         return alert(err.message);
       }
     });
@@ -153,7 +152,6 @@ class VoiceChat extends Component {
       this.call = this.peer.call(counterpartId, mediaStream);
 
     } catch (err) {
-      console.log(err);
       return alert(err.message);
     }
 

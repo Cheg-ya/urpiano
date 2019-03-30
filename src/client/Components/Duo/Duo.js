@@ -22,7 +22,7 @@ class Duo extends Component {
       isChatMode: false
     };
 
-    this.socket = io.connect();
+    this.socket = io.connect({transports: ['websocket']});
     this.roomName = this.props.match.params.room_name;
     this.createRoom = this.createRoom.bind(this);
     this.getOutOfRoom = this.getOutOfRoom.bind(this);

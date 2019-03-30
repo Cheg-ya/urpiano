@@ -1,6 +1,7 @@
 const socket = require('socket.io');
 const express = require('express');
-const https = require('http');
+const https = require('https');
+const http = require('http');
 const _ = require('lodash');
 const fs = require('fs');
 
@@ -10,7 +11,7 @@ let io;
 
 if (process.env.NODE_ENV === "production") {
   console.log("Production");
-  server = https.createServer(app);
+  server = http.createServer(app);
   io = socket(server);
 
   app.use((req, res, next) => {
@@ -38,7 +39,6 @@ if (process.env.NODE_ENV === "production") {
   server = https.createServer(options, app);
   io = socket(server);
 }
-
 
 const clients = {};
 

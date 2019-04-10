@@ -1,7 +1,7 @@
 # UrPiano (UP)
 
 >## Introduction
-- **UP**은 **실시간** 채팅 및 음성 채팅이 가능한 피아노 합주 어플리케이션 입니다.
+- **UP**은 **실시간** 채팅 및 음성 채팅이 가능한 **실시간** 피아노 합주 어플리케이션 입니다.
 
 >## Table of Contents
 - [Installation](#Installation)
@@ -15,11 +15,9 @@
 git clone https://github.com/Cheg-ya/urpiano.git
 npm i
 
-//development
-npm run dev
+npm run dev //development
 
-//production 2019.3 기준
-https://www.yourpiano.club
+https://www.yourpiano.club //production 2019.3 기준
 ```
 
 >## Features
@@ -43,7 +41,7 @@ https://www.yourpiano.club
 
 >### Server-Side
 - Nodejs를 이용해 자바스크립트 서버 환경 구축
-- Server-side 프레임워크 Express를 이용한 서버 생성
+- Server-Side 프레임워크 Express를 이용한 서버 생성
 - 실시간 양방향 통신을 위한 Socket io
 
 >### Test
@@ -56,17 +54,17 @@ https://www.yourpiano.club
 - Circleci를 활용한 배포 자동화 및 지속적인 관리
 
 >### Management tool
-- Trello를 이용해 Server-side, Client-side 업무 세분화 및 탄력적 스케쥴 관리
+- Trello를 이용해 Server-Side, Client-Side 업무 세분화 및 탄력적 스케쥴 관리
 
 >## Challenge
 - Socket io, Peerjs에 의한 실시간 양방향 통신과 Publish & Subscribe 패턴의 이해
 - Web Audio API 이해
 - 개발 환경에서 배포 후 생기는 설정 변화에 대한 이해
-- Component 단위의 Separate Concerns
+- Component 단위의 Separation of Concerns
 
 >## Need to be improve
-- 모바일 및 반응형
+- 모바일 및 반응형 대응
 - Integration Test
 - Code Refactoring
 - 전반적인 UX & UI
-- Socket io와 Nodejs build-in module을 활용한 음성 채팅 구현 가능성 고려
+- Socket io와 Nodejs built-in module을 활용한 음성 채팅 구현 가능성 고려

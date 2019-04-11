@@ -1,18 +1,18 @@
 {
-  "name": "simple-react-full-stack",
+  "name": "YourPiano",
   "version": "1.0.0",
-  "description": "Boilerplate to build a full stack web application using React, Node.js, Express and Webpack.",
+  "description": "UP is an web application that provide real time piano playing.",
   "main": "src/server/index.js",
   "scripts": {
     "test": "jest --watch",
     "test:debug": "node --inspect ./node_modules/jest/bin/jest.js --runInBand --watch",
     "build": "webpack --mode production",
-    "start": "node src/server/index.js",
+    "start": "npm run build && node src/server/index.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon --inspect src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "Sandeep Raveesh",
+  "author": "Taehwan Song",
   "license": "ISC",
   "dependencies": {
     "acorn": "^6.1.1",

@@ -11,6 +11,7 @@ let io;
 
 if (process.env.NODE_ENV === "production") {
   console.log("Production");
+
   server = http.createServer(app);
   io = socket(server);
 
@@ -24,11 +25,12 @@ if (process.env.NODE_ENV === "production") {
 
   app.use(express.static('dist'));
   app.get('/*', (req, res) => {
-    res.sendFile('index.html', { root: './dist/' });  
+    res.sendFile('index.html', { root: './dist/' });
   });
 
 } else {
   console.log("Development");
+
   const privateKey  = fs.readFileSync(__dirname + '/credential/server.csr.key');
   const certificate = fs.readFileSync(__dirname + '/credential/server.crt');
   const options = {

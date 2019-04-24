@@ -13,9 +13,8 @@
 >## Installation
 ```
 git clone https://github.com/Cheg-ya/urpiano.git
-npm i
 
-npm run dev //development
+npm i
 
 https://www.yourpiano.club //production 2019.3 기준
 ```
@@ -67,4 +66,4 @@ https://www.yourpiano.club //production 2019.3 기준
 - Integration Test
 - Code Refactoring
 - 전반적인 UX & UI
-- Socket io와 Nodejs built-in module을 활용한 음성 채팅 구현 가능성 고려
+- Socket io을 활용한 음성 채팅 구현 가능성 고려
